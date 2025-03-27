@@ -33,8 +33,9 @@ def launch_app(cache_file_path, is_debug=False):
 
         console.print("")
 
+
 def main():
-    is_debug = False
+    is_debug = True
     cache_file_path = Path(__file__).parent.joinpath("cache.dat")
 
     launch_app(cache_file_path, is_debug)
