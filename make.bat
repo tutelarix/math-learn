@@ -44,13 +44,11 @@ goto :eof
 
 :install_p310
     python -m pip install -r resources\requirements.txt -v --extra-index-url https://download.pytorch.org/whl/cu124
-    python resources\install_yolox.py
     python -m pip freeze
     goto :eof
 
 :install_p311
     python -m pip install -r resources\requirements.txt -v --extra-index-url https://download.pytorch.org/whl/cu124
-    python resources\install_yolox.py
     python -m pip freeze
     goto :eof
 

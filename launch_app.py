@@ -35,7 +35,7 @@ def launch_app(cache_file_path, is_debug=False):
 
 
 def main():
-    is_debug = True
+    is_debug = False
     cache_file_path = Path(__file__).parent.joinpath("cache.dat")
 
     launch_app(cache_file_path, is_debug)

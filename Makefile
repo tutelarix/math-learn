@@ -10,12 +10,10 @@ update_packages:
 
 install_p310: update_packages
 	python3 -m pip install -r resources/requirements.txt -v --extra-index-url https://download.pytorch.org/whl/cu124
-	python3 resources/install_yolox.py
 	python3 -m pip freeze
 
 install_p311: update_packages
 	python3 -m pip install -r resources/requirements.txt -v --extra-index-url https://download.pytorch.org/whl/cu124
-	python3 resources/install_yolox.py
 	python3 -m pip freeze
 
 format_check:
