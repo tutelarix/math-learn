@@ -23,7 +23,7 @@ def get_mult_table_operation(cache_learned, max_num, is_debug):
 
 
 def multiplication_table(cache_file_path, is_debug=False):
-    max_num = 1
+    max_num = 5
 
     console = Console(color_system="windows")
     console.clear()
