@@ -1,0 +1,6 @@
+[run]
+omit =
+    # omit tests folder
+    tests/*
+    # omit thirdparties
+    thirdparties/*
