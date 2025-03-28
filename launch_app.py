@@ -6,7 +6,7 @@ from beaupy import select
 from rich.console import Console
 
 from common.general.logger import logger
-from math_testing_ops import multiplication_table
+from math_testing_ops import multi_table, division_multi_table
 
 
 class MainOptions(IntEnum):
@@ -20,7 +20,10 @@ def _load_cache(cache_file_path, is_debug):
         with open(cache_file_path, "rb") as cache_file:
             cache = pickle.load(cache_file)
     else:
-        cache = {"multi_table": {"learned": [], "learning": {}}}
+        cache = {
+            "multi_table_multi": {"learned": [], "learning": {}},
+            "multi_table_div": {"learned": [], "learning": {}},
+        }
 
     if is_debug:
         logger.debug(f"Cache: {cache}")
@@ -36,13 +39,14 @@ def _save_cache(cache_file_path, cache, is_debug):
         pickle.dump(cache, cache_file)
 
 
-def launch_app(cache_file_path, is_debug=False):
+def launch_app(is_debug=False):
     max_num = 5
 
     console = Console(color_system="windows")
     console.clear()
     console.print("Привіт Вовчик! Давай потренуємо математику.")
 
+    cache_file_path = Path(__file__).parent.joinpath("cache.dat")
     cache = _load_cache(cache_file_path, is_debug)
 
     op_index = -1
@@ -55,10 +59,11 @@ def launch_app(cache_file_path, is_debug=False):
 
         op_index = ops.index(operation)
         if op_index == MainOptions.Multiplication:
-            multiplication_table(cache["multi_table"], max_num, is_debug)
+            multi_table(cache["multi_table_multi"], max_num, is_debug)
             _save_cache(cache_file_path, cache, is_debug)
         elif op_index == MainOptions.Deletion:
-            console.print("Ділення не реалізовано")
+            division_multi_table(cache["multi_table_div"], max_num, is_debug)
+            _save_cache(cache_file_path, cache, is_debug)
         elif op_index == MainOptions.ClearDatabase:
             cache_file_path.unlink(missing_ok=True)
             console.print("Історія минулих тестувань стерта")
@@ -69,10 +74,7 @@ def launch_app(cache_file_path, is_debug=False):
 
 
 def main():
-    is_debug = True
-    cache_file_path = Path(__file__).parent.joinpath("cache.dat")
-
-    launch_app(cache_file_path, is_debug)
+    launch_app(False)
 
 
 if __name__ == "__main__":

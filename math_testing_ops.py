@@ -6,32 +6,32 @@ from rich.console import Console
 from common.general.logger import logger
 
 
-def get_mult_table_operation(cache_learned, max_num, is_debug):
+def get_mult_table_operation(cache_learned, min_num, max_num, is_debug):
     if is_debug:
         logger.debug(len(cache_learned))
         logger.debug(cache_learned)
 
     full_max_num = 10
-    if not len(cache_learned) == (max_num + 1) * (full_max_num + 1):
+    if not len(cache_learned) == (max_num - min_num + 1) * (full_max_num - min_num + 1):
         current = -1
         while current in cache_learned or current == -1:
-            first = randint(0, max_num)
-            second = randint(0, full_max_num)
+            first = randint(min_num, max_num)
+            second = randint(min_num, full_max_num)
             current = (first, second)
         return current
     return None
 
 
-def multiplication_table(cache, max_num, is_debug=False):
+def multi_table(cache, max_num, is_debug=False):
     console = Console(color_system="windows")
     console.clear()
-    console.print(f"fПеревіряємо табличку множення до цифри {max_num}")
+    console.print(f"Перевіряємо табличку множення до цифри {max_num}")
     console.print("Нажми 'q', щоб повернутися назад в меню")
 
     read_line = ""
     while read_line.lower() not in ["q", "й"]:
         console.print("---------")
-        values = get_mult_table_operation(cache["learned"], max_num, is_debug)
+        values = get_mult_table_operation(cache["learned"], 0, max_num, is_debug)
 
         if values is None:
             console.print(f"Оуоу. Здається ти все вивчив до цифри {max_num}. Ти супер крутий.")
@@ -45,20 +45,62 @@ def multiplication_table(cache, max_num, is_debug=False):
             if shuf_values[0] * shuf_values[1] == multi_result:
                 console.print("Правильно. Ура.")
 
-                if values in cache["learning"]:
-                    cache["learning"][values] -= 1
-                    if cache["learning"][values] == 0:
-                        del cache["learning"][values]
-                else:
-                    cache["learned"].append(values)
+                _cache_correct(cache, values)
             else:
                 console.print(
                     f"Не правильно. {shuf_values[0]} * {shuf_values[1]} = {shuf_values[0] * shuf_values[1]}"
                 )
-                if values in cache["learning"]:
-                    cache["learning"][values] += 1
-                else:
-                    cache["learning"][values] = 1
+                _cache_incorrect(cache, values)
+
+        logger.info(f"Cache: {cache}")
+
+    console.print("Гарно попрацював.")
+
+
+def _cache_correct(cache, values):
+    if values in cache["learning"]:
+        cache["learning"][values] -= 1
+        if cache["learning"][values] == 0:
+            del cache["learning"][values]
+    else:
+        cache["learned"].append(values)
+
+
+def _cache_incorrect(cache, values):
+    if values in cache["learning"]:
+        cache["learning"][values] += 1
+    else:
+        cache["learning"][values] = 1
+
+
+def division_multi_table(cache, max_num, is_debug=False):
+    console = Console(color_system="windows")
+    console.clear()
+    console.print(f"Перевіряємо ділення в табличці множення до цифри {max_num}")
+    console.print("Нажми 'q', щоб повернутися назад в меню")
+
+    read_line = ""
+    while read_line.lower() not in ["q", "й"]:
+        console.print("---------")
+        values = get_mult_table_operation(cache["learned"], 1, max_num, is_debug)
+
+        if values is None:
+            console.print(f"Оуоу. Здається ти все вивчив до цифри {max_num}. Ти супер крутий.")
+            break
+
+        shuf_values = list(values)
+        random.shuffle(shuf_values)
+        read_line = console.input(f"{shuf_values[0] * shuf_values[1]} / {shuf_values[0]} = ")
+        if read_line.isdigit():
+            div_value = int(read_line)
+            if shuf_values[1] == div_value:
+                console.print("Правильно. Ура.")
+                _cache_correct(cache, values)
+            else:
+                console.print(
+                    f"Не правильно. {shuf_values[0] * shuf_values[1]} / {shuf_values[0]} = {shuf_values[1]}"
+                )
+                _cache_incorrect(cache, values)
 
         logger.info(f"Cache: {cache}")
 
