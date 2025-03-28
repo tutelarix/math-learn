@@ -42,11 +42,13 @@ def _create_logger(log_level=logging.DEBUG, log_name=None):
     new_logger.propagate = True
 
     # Simple formatter for console
-    format_console = logging.Formatter("%(asctime)s; %(levelname)8s;  %(filename)s:  %(message)s")
+    format_console = logging.Formatter(
+        "%(asctime)s; %(levelname)8s;  %(filename)s->%(funcName)s():%(lineno)s:  %(message)s"
+    )
 
     # Complex formatter for the file log
     format_file = logging.Formatter(
-        "%(asctime)s; Process: %(process)d %(processName)s; Thread: %(thread)d %(threadName)s; %(levelname)8s;  %(filename)s:  %(message)s"
+        "%(asctime)s; Process: %(process)d %(processName)s; Thread: %(thread)d %(threadName)s; %(levelname)8s;  %(filename)s->%(funcName)s():%(lineno)s:  %(message)s"
     )
 
     # Prepare stream handler to return log to the stdout

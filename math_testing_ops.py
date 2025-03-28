@@ -1,4 +1,3 @@
-import pickle
 import random
 from random import randint
 
@@ -12,51 +11,55 @@ def get_mult_table_operation(cache_learned, max_num, is_debug):
         logger.debug(len(cache_learned))
         logger.debug(cache_learned)
 
-    if not len(cache_learned) == (max_num + 1) * 11:
+    full_max_num = 10
+    if not len(cache_learned) == (max_num + 1) * (full_max_num + 1):
         current = -1
         while current in cache_learned or current == -1:
             first = randint(0, max_num)
-            second = randint(0, 10)
+            second = randint(0, full_max_num)
             current = (first, second)
         return current
     return None
 
 
-def multiplication_table(cache_file_path, is_debug=False):
-    max_num = 5
-
+def multiplication_table(cache, max_num, is_debug=False):
     console = Console(color_system="windows")
     console.clear()
-    console.print("Перевіряємо табличку множення")
+    console.print(f"fПеревіряємо табличку множення до цифри {max_num}")
     console.print("Нажми 'q', щоб повернутися назад в меню")
 
-    if cache_file_path.exists():
-        with open(cache_file_path, "rb") as cache_file:
-            cache = pickle.load(cache_file)
-    else:
-        cache = {"multi_table": {"learned": []}}
     read_line = ""
     while read_line.lower() not in ["q", "й"]:
         console.print("---------")
-        values = get_mult_table_operation(cache["multi_table"]["learned"], max_num, is_debug)
+        values = get_mult_table_operation(cache["learned"], max_num, is_debug)
 
         if values is None:
             console.print(f"Оуоу. Здається ти все вивчив до цифри {max_num}. Ти супер крутий.")
             break
 
-        shuffled_values = list(values)
-        random.shuffle(shuffled_values)
-        read_line = console.input(f"{shuffled_values[0]} * {shuffled_values[1]} = ")
+        shuf_values = list(values)
+        random.shuffle(shuf_values)
+        read_line = console.input(f"{shuf_values[0]} * {shuf_values[1]} = ")
         if read_line.isdigit():
             multi_result = int(read_line)
-            if shuffled_values[0] * shuffled_values[1] == multi_result:
+            if shuf_values[0] * shuf_values[1] == multi_result:
                 console.print("Правильно. Ура.")
-                cache["multi_table"]["learned"].append(values)
+
+                if values in cache["learning"]:
+                    cache["learning"][values] -= 1
+                    if cache["learning"][values] == 0:
+                        del cache["learning"][values]
+                else:
+                    cache["learned"].append(values)
             else:
                 console.print(
-                    f"Не правильно. {shuffled_values[0]} * {shuffled_values[1]} = {shuffled_values[0] * shuffled_values[1]}"
+                    f"Не правильно. {shuf_values[0]} * {shuf_values[1]} = {shuf_values[0] * shuf_values[1]}"
                 )
+                if values in cache["learning"]:
+                    cache["learning"][values] += 1
+                else:
+                    cache["learning"][values] = 1
 
-    with open(cache_file_path, "wb") as cache_file:
-        pickle.dump(cache, cache_file)
+        logger.info(f"Cache: {cache}")
+
     console.print("Гарно попрацював.")
