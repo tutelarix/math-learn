@@ -52,7 +52,8 @@ def multi_table(cache, max_num, is_debug=False):
                 )
                 _cache_incorrect(cache, values)
 
-        logger.info(f"Cache: {cache}")
+        if is_debug:
+            logger.debug(f"Cache: {cache}")
 
     console.print("Гарно попрацював.")
 
@@ -102,6 +103,7 @@ def division_multi_table(cache, max_num, is_debug=False):
                 )
                 _cache_incorrect(cache, values)
 
-        logger.info(f"Cache: {cache}")
+        if is_debug:
+            logger.debug(f"Cache: {cache}")
 
     console.print("Гарно попрацював.")
