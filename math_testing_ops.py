@@ -29,6 +29,7 @@ def multi_table(cache, max_num, is_debug=False):
     console.print("Нажми 'q', щоб повернутися назад в меню")
 
     read_line = ""
+    num_learned_samples = 0
     while read_line.lower() not in ["q", "й"]:
         console.print("---------")
         values = get_mult_table_operation(cache["learned"], 0, max_num, is_debug)
@@ -43,7 +44,8 @@ def multi_table(cache, max_num, is_debug=False):
         if read_line.isdigit():
             multi_result = int(read_line)
             if shuf_values[0] * shuf_values[1] == multi_result:
-                console.print("Правильно. Ура.")
+                num_learned_samples += 1
+                console.print(f"Правильно. Ура. Ти повторив {num_learned_samples} прикладів.")
 
                 _cache_correct(cache, values)
             else:
@@ -80,6 +82,7 @@ def division_multi_table(cache, max_num, is_debug=False):
     console.print(f"Перевіряємо ділення в табличці множення до цифри {max_num}")
     console.print("Нажми 'q', щоб повернутися назад в меню")
 
+    num_learned_samples = 0
     read_line = ""
     while read_line.lower() not in ["q", "й"]:
         console.print("---------")
@@ -95,7 +98,9 @@ def division_multi_table(cache, max_num, is_debug=False):
         if read_line.isdigit():
             div_value = int(read_line)
             if shuf_values[1] == div_value:
-                console.print("Правильно. Ура.")
+                num_learned_samples += 1
+                console.print(f"Правильно. Ура. Ти повторив {num_learned_samples} прикладів.")
+
                 _cache_correct(cache, values)
             else:
                 console.print(
