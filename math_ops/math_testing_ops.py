@@ -1,7 +1,6 @@
 import random
 from random import randint
 
-from common.communication_interface.console_interace import ConsoleInterface
 from common.general.logger import logger
 
 
@@ -20,7 +19,9 @@ def get_mult_table_operation(cache_learned, min_num, max_num):
     return None
 
 
-def multi_table(com_interface, cache, max_num):
+def multi_table(app, cache):
+    max_num = app.get_config()["max_num"]
+    com_interface = app.get_com_interface()
     com_interface.clear()
     com_interface.dialog(
         f"Перевіряємо табличку множення до цифри {max_num}\n"
@@ -74,8 +75,9 @@ def _cache_incorrect(cache, values):
         cache["learning"][values] = 1
 
 
-def division_multi_table(com_interface, cache, max_num):
-    com_interface = ConsoleInterface()
+def division_multi_table(app, cache):
+    max_num = app.get_config()["max_num"]
+    com_interface = app.get_com_interface()
     com_interface.clear()
     com_interface.dialog(
         f"Перевіряємо ділення в табличці множення до цифри {max_num}\n"

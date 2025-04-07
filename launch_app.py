@@ -6,7 +6,8 @@ from pathlib import Path
 import click
 from beaupy import select
 
-from common.communication_interface.console_interace import ConsoleInterface
+from common.application import Application
+from common.communication_interface import CommunicationInterface
 from common.general.logger import logger
 from math_ops.math_testing_ops import multi_table, division_multi_table
 
@@ -57,9 +58,9 @@ def launch_app(is_clear_db=False):
     Launch application
     :param is_clear_db: clear database file
     """
-    max_num = 5
+    app = Application(com_interface_type=CommunicationInterface.Console)
+    com_interface = app.get_com_interface()
 
-    com_interface = ConsoleInterface()
     com_interface.clear()
     com_interface.dialog("Привіт Вовчик! Давай потренуємо математику.")
 
@@ -76,10 +77,10 @@ def launch_app(is_clear_db=False):
 
         op_index = ops.index(operation)
         if op_index == MainOptions.Multiplication:
-            multi_table(com_interface, cache["multi_table_multi"], max_num)
+            multi_table(app, cache["multi_table_multi"])
             _save_cache(cache_file_path, cache)
         elif op_index == MainOptions.Deletion:
-            division_multi_table(com_interface, cache["multi_table_div"], max_num)
+            division_multi_table(app, cache["multi_table_div"])
             _save_cache(cache_file_path, cache)
 
         com_interface.dialog("")
