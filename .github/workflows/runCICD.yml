@@ -1,0 +1,60 @@
+name: Build and test workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_and_test:
+    runs-on: [ ubuntu-latest, windows-latest ]
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python_version: "3.11"
+            python_version_str: 311
+
+    # Set reasonable timeout value.
+    timeout-minutes: 180
+
+    steps:
+      - name: Job info
+        run: |
+          echo "The job was automatically triggered by a ${{ github.event_name }} event."
+          echo "Configuration Python version: ${{ matrix.python_version }}"
+
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Checkout LFS files
+        run: |
+          echo '[lfs]' > .lfsconfig
+          echo '    url = "https://${{ secrets.BART_USERNAME }}:${{ secrets.BART_TOKEN }}@bart.sec.samsung.net/artifactory/api/lfs/immersiveavatarsolution-gitlfs-local"' >> .lfsconfig
+          git lfs install
+          git lfs pull
+        shell: bash
+
+      - run: |
+          echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+            python-version: ${{ matrix.python_version }}
+
+      - name: Prepare environment
+        run: |
+          make install_p${{ matrix.python_version_str }}
+        shell: bash
+
+      - name: Run all checks
+        run: |
+          make all_checks
+        shell: bash
