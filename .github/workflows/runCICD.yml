@@ -33,14 +33,6 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Checkout LFS files
-        run: |
-          echo '[lfs]' > .lfsconfig
-          echo '    url = "https://${{ secrets.BART_USERNAME }}:${{ secrets.BART_TOKEN }}@bart.sec.samsung.net/artifactory/api/lfs/immersiveavatarsolution-gitlfs-local"' >> .lfsconfig
-          git lfs install
-          git lfs pull
-        shell: bash
-
       - run: |
           echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
 
