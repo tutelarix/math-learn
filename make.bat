@@ -5,11 +5,6 @@ if [%1]==[] (
     goto :eof
 )
 
-if [%1]==[install_p310] (
-    call :update_packages
-    goto :install_p310
-)
-
 if [%1]==[install_p311] (
     call :update_packages
     goto :install_p311
@@ -42,22 +37,17 @@ goto :eof
     python -m pip install --upgrade setuptools wheel -v
     goto :eof
 
-:install_p310
-    python -m pip install -r resources\requirements.txt -v --extra-index-url https://download.pytorch.org/whl/cu124
-    python -m pip freeze
-    goto :eof
-
 :install_p311
     python -m pip install -r resources\requirements.txt -v --extra-index-url https://download.pytorch.org/whl/cu124
     python -m pip freeze
     goto :eof
 
 :format_check
-    python -m black --line-length=100 --check -t py310 -t py311 --required-version 24 .
+    python -m black --line-length=100 --check -t py311 --required-version 24 .
     goto :eof
 
 :format
-    python -m black --line-length=100 -t py310 -t py311 --required-version 24 .
+    python -m black --line-length=100 -t py311 --required-version 24 .
     goto :eof
 
 :lint
