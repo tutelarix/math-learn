@@ -4,7 +4,6 @@ greetings:
 	@echo "Welcome! Select a proper target."
 
 update_packages:
-	sudo apt update -y && sudo apt upgrade -y
 	python3 -m pip install --upgrade pip -v && \
         python3 -m pip install --upgrade setuptools wheel -v
 
