@@ -1,11 +1,10 @@
 import logging
-import pickle
 from enum import IntEnum
-from pathlib import Path
 
 import click
 from beaupy import select
 
+from common.Database import DatabaseID
 from common.application import Application
 from common.communication_interface import CommunicationInterface
 from common.general.logger import logger
@@ -15,57 +14,22 @@ from math_ops.math_testing_ops import multi_table, division_multi_table
 class MainOptions(IntEnum):
     Multiplication = 0
     Deletion = 1
+    AdditionSubtraction = 2
 
 
-def _load_cache(cache_file_path, is_clear_db=False):
-    """
-    Load cache
-    :param cache_file_path: path to cache file
-    :param is_clear_db: where to remove the file and start from scratch
-    :return: cache data
-    """
-    if is_clear_db:
-        logger.debug("Clear db file")
-        cache_file_path.unlink(missing_ok=True)
-
-    if cache_file_path.exists():
-        with open(cache_file_path, "rb") as cache_file:
-            cache = pickle.load(cache_file)
-    else:
-        cache = {
-            "multi_table_multi": {"learned": [], "learning": {}},
-            "multi_table_div": {"learned": [], "learning": {}},
-        }
-
-    logger.debug(f"Cache: {cache}")
-    return cache
-
-
-def _save_cache(cache_file_path, cache):
-    """
-    Save cache to file
-    :param cache_file_path: path to cache file
-    :param cache: cache data
-    """
-    logger.debug(f"Cache: {cache}")
-
-    with open(cache_file_path, "wb") as cache_file:
-        pickle.dump(cache, cache_file)
-
-
-def launch_app(is_clear_db=False):
+def launch_app(is_clear_db=False, com_interface_type=CommunicationInterface.Console):
     """
     Launch application
     :param is_clear_db: clear database file
+    :param com_interface_type: type of communication interface
     """
-    app = Application(com_interface_type=CommunicationInterface.Console)
+    app = Application(com_interface_type=com_interface_type)
+    db = app.get_database()
+    db.load_db(is_clear_db)
     com_interface = app.get_com_interface()
 
     com_interface.clear()
     com_interface.dialog("Привіт Вовчик! Давай потренуємо математику.")
-
-    cache_file_path = Path(__file__).parent.joinpath("cache.dat")
-    cache = _load_cache(cache_file_path, is_clear_db)
 
     op_index = -1
     ops = ["Табличка множення", "Ділення", "Вихід"]
@@ -77,23 +41,20 @@ def launch_app(is_clear_db=False):
 
         op_index = ops.index(operation)
         if op_index == MainOptions.Multiplication:
-            multi_table(app, cache["multi_table_multi"])
-            _save_cache(cache_file_path, cache)
+            multi_table(app, db.get_data(DatabaseID.MultiplicationTable))
         elif op_index == MainOptions.Deletion:
-            division_multi_table(app, cache["multi_table_div"])
-            _save_cache(cache_file_path, cache)
+            division_multi_table(app, db.get_data(DatabaseID.MultiplicationTable))
+        elif op_index == MainOptions.AdditionSubtraction:
+            pass
 
+        db.save_db()
         com_interface.dialog("")
-
-    _save_cache(cache_file_path, cache)
 
 
 @click.command()
 @click.option("--verbose", "-V", is_flag=True, help="Print debug output.")
 @click.option("--clear-db", is_flag=True, help="Clear database")
 def main(verbose=False, clear_db=False):
-    print(verbose)
-
     if not verbose:
         logger.level = logging.CRITICAL
 
