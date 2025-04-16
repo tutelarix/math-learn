@@ -4,14 +4,14 @@ from random import randint
 from common.general.logger import logger
 
 
-def get_mult_table_operation(cache_learned, min_num, max_num):
-    logger.debug(len(cache_learned))
-    logger.debug(cache_learned)
+def get_mult_table_operation(database_learned, min_num, max_num):
+    logger.debug(len(database_learned))
+    logger.debug(database_learned)
 
     full_max_num = 10
-    if not len(cache_learned) == (max_num - min_num + 1) * (full_max_num - min_num + 1):
+    if not len(database_learned) == (max_num - min_num + 1) * (full_max_num - min_num + 1):
         current = -1
-        while current in cache_learned or current == -1:
+        while current in database_learned or current == -1:
             first = randint(min_num, max_num)
             second = randint(min_num, full_max_num)
             current = (first, second)
@@ -19,7 +19,8 @@ def get_mult_table_operation(cache_learned, min_num, max_num):
     return None
 
 
-def multi_table(app, cache):
+def multi_table(app, database):
+    _init_db(database)
     max_num = app.get_config()["max_num"]
     com_interface = app.get_com_interface()
     com_interface.clear()
@@ -32,7 +33,7 @@ def multi_table(app, cache):
     num_learned_samples = 0
     while read_line.lower() not in ["q", "й"]:
         com_interface.dialog("---------")
-        values = get_mult_table_operation(cache["learned"], 0, max_num)
+        values = get_mult_table_operation(database["done"], 0, max_num)
 
         if values is None:
             com_interface.dialog(
@@ -43,39 +44,43 @@ def multi_table(app, cache):
         shuf_values = list(values)
         random.shuffle(shuf_values)
         read_line = com_interface.input(f"{shuf_values[0]} * {shuf_values[1]} = ")
-        if read_line.isdigit() and shuf_values[0] * shuf_values[1] == int(read_line):
-            num_learned_samples += 1
-            com_interface.dialog(f"Правильно. Ура. Ти повторив {num_learned_samples} прикладів.")
+        if read_line.isdigit():
+            if shuf_values[0] * shuf_values[1] == int(read_line):
+                num_learned_samples += 1
+                com_interface.dialog(
+                    f"Правильно. Ура. Ти повторив {num_learned_samples} прикладів."
+                )
 
-            _cache_correct(cache, values)
-        else:
-            com_interface.dialog(
-                f"Не правильно. {shuf_values[0]} * {shuf_values[1]} = {shuf_values[0] * shuf_values[1]}"
-            )
-            _cache_incorrect(cache, values)
+                _add_correct(database, values)
+            else:
+                com_interface.dialog(
+                    f"Не правильно. {shuf_values[0]} * {shuf_values[1]} = {shuf_values[0] * shuf_values[1]}"
+                )
+                _add_incorrect(database, values)
 
-        logger.debug(f"Cache: {cache}")
+        logger.debug(f"Database: {database}")
 
     com_interface.dialog("Гарно попрацював.")
 
 
-def _cache_correct(cache, values):
-    if values in cache["learning"]:
-        cache["learning"][values] -= 1
-        if cache["learning"][values] == 0:
-            del cache["learning"][values]
+def _add_correct(database, values):
+    if values in database["todo"]:
+        database["todo"][values] -= 1
+        if database["todo"][values] == 0:
+            del database["todo"][values]
     else:
-        cache["learned"].append(values)
+        database["done"].append(values)
 
 
-def _cache_incorrect(cache, values):
-    if values in cache["learning"]:
-        cache["learning"][values] += 1
+def _add_incorrect(database, values):
+    if values in database["todo"]:
+        database["todo"][values] += 1
     else:
-        cache["learning"][values] = 1
+        database["todo"][values] = 1
 
 
-def division_multi_table(app, cache):
+def division_multi_table(app, database):
+    _init_db(database)
     max_num = app.get_config()["max_num"]
     com_interface = app.get_com_interface()
     com_interface.clear()
@@ -88,7 +93,7 @@ def division_multi_table(app, cache):
     read_line = ""
     while read_line.lower() not in ["q", "й"]:
         com_interface.dialog("---------")
-        values = get_mult_table_operation(cache["learned"], 1, max_num)
+        values = get_mult_table_operation(database["done"], 1, max_num)
 
         if values is None:
             com_interface.dialog(
@@ -99,17 +104,26 @@ def division_multi_table(app, cache):
         shuf_values = list(values)
         random.shuffle(shuf_values)
         read_line = com_interface.input(f"{shuf_values[0] * shuf_values[1]} / {shuf_values[0]} = ")
-        if read_line.isdigit() and shuf_values[1] == int(read_line):
-            num_learned_samples += 1
-            com_interface.dialog(f"Правильно. Ура. Ти повторив {num_learned_samples} прикладів.")
+        if read_line.isdigit():
+            if shuf_values[1] == int(read_line):
+                num_learned_samples += 1
+                com_interface.dialog(
+                    f"Правильно. Ура. Ти повторив {num_learned_samples} прикладів."
+                )
 
-            _cache_correct(cache, values)
-        else:
-            com_interface.dialog(
-                f"Не правильно. {shuf_values[0] * shuf_values[1]} / {shuf_values[0]} = {shuf_values[1]}"
-            )
-            _cache_incorrect(cache, values)
+                _add_correct(database, values)
+            else:
+                com_interface.dialog(
+                    f"Не правильно. {shuf_values[0] * shuf_values[1]} / {shuf_values[0]} = {shuf_values[1]}"
+                )
+                _add_incorrect(database, values)
 
-        logger.debug(f"Cache: {cache}")
+        logger.debug(f"Database: {database}")
 
     com_interface.dialog("Гарно попрацював.")
+
+
+def _init_db(database):
+    if not database:
+        database["done"] = []
+        database["todo"] = {}
