@@ -30,7 +30,7 @@ class EmptyInterface(ComInterface):
         :param text:
         :return: resulted text
         """
-        logger.debug(f"Input. Return {self._input_result}")
+        logger.debug(f"{text}. Return {self._input_result}")
         return self._input_result
 
     def set_input_result(self, input_result):
