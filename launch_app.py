@@ -14,6 +14,7 @@ class MainOptions(IntEnum):
     Multiplication = 0
     Deletion = 1
     AdditionSubtraction = 2
+    Exit = 3
 
 
 def launch_app(is_clear_db=False, com_interface_type=CommunicationInterface.Console):
@@ -28,11 +29,11 @@ def launch_app(is_clear_db=False, com_interface_type=CommunicationInterface.Cons
     com_interface = app.get_com_interface()
 
     com_interface.clear()
-    com_interface.dialog("Привіт Вовчик! Давай потренуємо математику.")
+    com_interface.dialog("Привіт Вовчик! Давай потренуємось.")
 
     op_index = -1
-    ops = ["Табличка множення", "Ділення", "Вихід"]
-    while op_index != len(ops) - 1:
+    ops = ["Табличка множення", "Ділення", "Додавання/Віднімання", "Вихід"]
+    while op_index != MainOptions.Exit:
         com_interface.dialog("Вибери з опцій нижче, що хочеш потренувати.")
         op_index = com_interface.select(ops)
         com_interface.clear()

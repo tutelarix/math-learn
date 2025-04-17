@@ -52,11 +52,13 @@ def _create_logger(log_level=logging.DEBUG, log_name=None):
     )
 
     # Prepare stream handler to return log to the stdout
-    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler = logging.StreamHandler(
+        sys.stdout,
+    )
     console_handler.setFormatter(format_console)
 
     # Prepare file handler to save logs in file
-    file_handler = logging.FileHandler(_get_log_file_path())
+    file_handler = logging.FileHandler(_get_log_file_path(), encoding="utf-8")
     file_handler.setFormatter(format_file)
 
     _set_handlers(new_logger, log_level, [console_handler, file_handler])
