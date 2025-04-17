@@ -24,6 +24,19 @@ class TestEmptyInterface(unittest.TestCase):
             mock_method.assert_called()
             self.assertTrue("Enter res" in mock_method.call_args[0][0].msg)
 
+        select_result = 2
+        options = ["one", "two", "three"]
+        with patch.object(logging.StreamHandler, "emit", return_value=None) as mock_method:
+            com_interface.set_select_result(select_result)
+            self.assertEqual(com_interface.select(options), select_result)
+            mock_method.assert_called()
+            self.assertTrue("Select from options" in mock_method.call_args[0][0].msg)
+
+        select_result = 5
+        com_interface.set_select_result(select_result)
+        with self.assertRaises(IndexError):
+            com_interface.select(options)
+
 
 if __name__ == "__main__":
     unittest.main()
