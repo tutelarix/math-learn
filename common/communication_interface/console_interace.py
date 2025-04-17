@@ -1,3 +1,6 @@
+from typing import List
+
+from beaupy import select
 from rich.console import Console
 
 from common.communication_interface.com_interface import ComInterface
@@ -37,3 +40,12 @@ class ConsoleInterface(ComInterface):
             return self._console.input(text)
 
         raise ValueError(f"Not supported type: {type(text)}")
+
+    def select(self, options: List):
+        """
+        Interactive options selection
+        :param options: list of options
+        :return: index of option from the list
+        """
+        selected_option = select(options, cursor="🢧", cursor_style="cyan")
+        return options.index(selected_option)

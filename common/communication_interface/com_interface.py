@@ -1,3 +1,6 @@
+from typing import List
+
+
 class ComInterface:
     """
     Basic communication interface
@@ -21,5 +24,13 @@ class ComInterface:
         Print multi-line text and ask input
         :param text:
         :return: resulted text
+        """
+        raise NotImplementedError
+
+    def select(self, options: List):
+        """
+        Interactive options selection
+        :param options: list of options
+        :return: index of selected option from the list
         """
         raise NotImplementedError

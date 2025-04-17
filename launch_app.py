@@ -2,7 +2,6 @@ import logging
 from enum import IntEnum
 
 import click
-from beaupy import select
 
 from common.Database import DatabaseID
 from common.application import Application
@@ -35,11 +34,10 @@ def launch_app(is_clear_db=False, com_interface_type=CommunicationInterface.Cons
     ops = ["Табличка множення", "Ділення", "Вихід"]
     while op_index != len(ops) - 1:
         com_interface.dialog("Вибери з опцій нижче, що хочеш потренувати.")
-        operation = select(ops, cursor="🢧", cursor_style="cyan")
+        op_index = com_interface.select(ops)
         com_interface.clear()
-        com_interface.dialog(f"Ти вибрав: {operation}.")
+        com_interface.dialog(f"Ти вибрав: {ops[op_index]}.")
 
-        op_index = ops.index(operation)
         if op_index == MainOptions.Multiplication:
             multi_table(app, db.get_data(DatabaseID.MultiplicationTable))
         elif op_index == MainOptions.Deletion:
