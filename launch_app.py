@@ -7,14 +7,13 @@ from common.Database import DatabaseID
 from common.application import Application
 from common.communication_interface import CommunicationInterface
 from common.general.logger import logger
-from math_ops.math_testing_ops import multi_table, division_multi_table
+from practice.multiplication_table import multi_table
 
 
 class MainOptions(IntEnum):
-    Multiplication = 0
-    Deletion = 1
-    AdditionSubtraction = 2
-    Exit = 3
+    MultiplicationTable = 0
+    AdditionSubtraction = 1
+    Exit = 2
 
 
 def launch_app(is_clear_db=False, com_interface_type=CommunicationInterface.Console):
@@ -32,17 +31,15 @@ def launch_app(is_clear_db=False, com_interface_type=CommunicationInterface.Cons
     com_interface.dialog("Привіт Вовчик! Давай потренуємось.")
 
     op_index = -1
-    ops = ["Табличка множення", "Ділення", "Додавання/Віднімання", "Вихід"]
+    ops = ["Табличка множення", "Додавання/Віднімання", "Вихід"]
     while op_index != MainOptions.Exit:
         com_interface.dialog("Вибери з опцій нижче, що хочеш потренувати.")
         op_index = com_interface.select(ops)
         com_interface.clear()
         com_interface.dialog(f"Ти вибрав: {ops[op_index]}.")
 
-        if op_index == MainOptions.Multiplication:
+        if op_index == MainOptions.MultiplicationTable:
             multi_table(app, db.get_data(DatabaseID.MultiplicationTable))
-        elif op_index == MainOptions.Deletion:
-            division_multi_table(app, db.get_data(DatabaseID.MultiplicationTable))
         elif op_index == MainOptions.AdditionSubtraction:
             pass
 
