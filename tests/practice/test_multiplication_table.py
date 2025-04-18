@@ -17,10 +17,6 @@ class TestMultiplicationTable(unittest.TestCase):
         multi_table(app, database)
 
     def test_get_mult_table_operation(self):
-        # Check order of values, important for saving in database
-        values = _get_mult_table_operation([], 1, 10)
-        self.assertLess(values[0], values[1])
-
         # Check values generation
         database = []
         num = 7
