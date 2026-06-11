@@ -8,6 +8,7 @@ from common.application import Application
 from common.communication_interface import CommunicationInterface
 from common.general.logger import logger
 from practice.multiplication_table import multi_table
+from practice.addition_subtraction import addition_subtraction_testing
 
 
 class MainOptions(IntEnum):
@@ -41,7 +42,7 @@ def launch_app(is_clear_db=False, com_interface_type=CommunicationInterface.Cons
         if op_index == MainOptions.MultiplicationTable:
             multi_table(app, db.get_data(DatabaseID.MultiplicationTable))
         elif op_index == MainOptions.AdditionSubtraction:
-            pass
+            addition_subtraction_testing(app, db.get_data(DatabaseID.AdditionSubtraction))
 
         db.save_db()
         com_interface.dialog("")

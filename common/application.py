@@ -19,7 +19,15 @@ class Application:
         :param com_interface_type: type of communication interface
         """
         self._set_com_interface(com_interface_type)
-        self._config = {"multiplication_table_max": 10}
+        self._config = {
+            "multiplication_table": {
+                "max": 10,
+            },
+            "addition_subtraction": {
+                "digits": 2,
+                "max_checks": 100,
+            },
+        }
         self._database = Database(Path(__file__).parent)
 
     def get_com_interface(self):
