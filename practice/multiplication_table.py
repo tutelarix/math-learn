@@ -64,7 +64,7 @@ def multi_table(app, database):
     """
     _init_db(database)
     com_interface = app.get_com_interface()
-    max_num = app.get_config()["multiplication_table_max"]
+    max_num = app.get_config()["multiplication_table"]["max"]
 
     com_interface.clear()
     com_interface.dialog(
